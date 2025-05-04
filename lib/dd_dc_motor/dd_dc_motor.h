@@ -35,6 +35,7 @@ void dcMotorSetSpeed(DD_DC_MOTOTR_H_t *motor, int8_t value);
 int8_t dcMotorGetSpeed(DD_DC_MOTOTR_H_t *motor);
 
 void dcMotorSetDirection(DD_DC_MOTOTR_H_t *motor, uint8_t direction);
+uint8_t dcMotorCalculateDirection(DD_DC_MOTOTR_H_t *motor, uint16_t usersSetValue, uint16_t currentValue, uint8_t hysteresis_value);
 uint8_t dcMotorGetDirection(DD_DC_MOTOTR_H_t *motor);
 
 void dcMotorStop(DD_DC_MOTOTR_H_t *motor);

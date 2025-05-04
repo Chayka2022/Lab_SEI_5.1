@@ -32,8 +32,6 @@ uint8_t hbridgeGetPwm(HBridge_t *hbridge)
 
 void hbridgeSetDirection(HBridge_t *hbridge, HBridgeDirection_t direction)
 {
-    printf("HBridge Setting Direction.. to %d\n\r", direction);
-
     hbridge->direction = direction;
     if (direction == HBRIDGE_FORWARD)
     {

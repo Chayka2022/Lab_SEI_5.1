@@ -12,6 +12,8 @@
 #define STOP_MOTOR_SPEED 0
 #define MIN_MOTOR_SPEED -100
 
+#define SERVO_MOTOR_SPEED 52
+
 #define SPEED_CHANGE_STEP 10
 
 #define RESISTOR_PIN A0
@@ -19,8 +21,23 @@
 #define VREF 5.0
 #define ADC_RESOLUTION 1023
 
+#define ACCURACY_LEVEL 1
+
+#define HYSTERESIS_VALUE 10
+
+#define SETPOINT_ANGLE 90
+#define MIN_ANGLE 0
+#define MAX_ANGLE 180
+
+#define SETPOINT_RESISTANCE 234
+#define RESISTANCE_TO_ONE_DEGREE 3.33
+#define MIN_RESISTANCE 207
+#define MAX_RESISTANCE 261
+
+#define CONTROL_NUMBER_OF_COMMANDS 5
+
 // median filter settings
-#define WINDOW_SIZE 15
+#define WINDOW_SIZE 5
 
 
 enum HBRRIDGE_PINS 

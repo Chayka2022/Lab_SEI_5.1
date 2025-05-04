@@ -16,15 +16,23 @@ void dcMotorCycleCall(DD_DC_MOTOTR_H_t *motor, HBridge_t *hbridge)
 {
     if (motor->wasModified == true)
     {
-        motor->wasModified = false;
-        uint8_t direction = motor->direction;  //dcMotorComputeDirection(motor->speed);
-        int16_t pwmValue = dcMotorConvertSpeedToPwm(motor->speed);
-
-        hbridgeSetDirection(hbridge, HBridgeDirection_t(direction));
-        controlPwm(hbridge, pwmValue);
-
-        printf("Motor direction: %d\n\r", direction);
+        hbridgeSetDirection(hbridge, HBridgeDirection_t(motor->direction));
+        controlPwm(hbridge, dcMotorConvertSpeedToPwm(motor->speed));
+        
+        motor->wasModified = false; 
     }
+
+    // if (motor->wasModified == true)
+    // {
+    //     motor->wasModified = false;
+    //     uint8_t direction = dcMotorComputeDirection(motor->speed);
+    //     int16_t pwmValue = dcMotorConvertSpeedToPwm(motor->speed);
+
+    //     hbridgeSetDirection(hbridge, HBridgeDirection_t(direction));
+    //     controlPwm(hbridge, pwmValue);
+
+    //     printf("Motor direction: %d\n\r", direction);
+    // }
 }
 
 void dcMotorSetSpeed(DD_DC_MOTOTR_H_t *motor, int8_t value)
@@ -42,6 +50,23 @@ void dcMotorSetDirection(DD_DC_MOTOTR_H_t *motor, uint8_t direction)
 {
     motor->direction = direction;
     motor->wasModified = true;
+}
+
+uint8_t dcMotorCalculateDirection(DD_DC_MOTOTR_H_t *motor, uint16_t usersSetValue, uint16_t currentValue, uint8_t hysteresis_value)
+{
+    if (usersSetValue > currentValue)
+    {
+        motor->direction = DC_MOTOR_BACKWARD;
+    }
+    else if (usersSetValue < currentValue)
+    {
+        motor->direction = DC_MOTOR_FORWARD;
+    }
+    else
+    {
+        motor->direction = DC_MOTOR_STOP;
+    }    
+    return motor->direction;
 }
 
 uint8_t dcMotorGetDirection(DD_DC_MOTOTR_H_t *motor)

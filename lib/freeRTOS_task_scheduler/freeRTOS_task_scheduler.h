@@ -10,6 +10,10 @@
 #include "dd_h_bridge_wrapper.h"
 #include "dd_variable_resistor.h"
 #include "hysteresis.h"
+#include "MedianFilter.h"
+#include "MeanFilter.h"
+#include "user_interface.h"
+
 
 
 void FreeRTOS_scheduler_setup(void *pvParameters);
