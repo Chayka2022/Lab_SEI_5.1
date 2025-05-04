@@ -1,5 +1,6 @@
 #include "freeRTOS_task_scheduler.h"
 
+DD_VARIABLE_RESISTOR_H_t variableResistor;
 HBridge_t hbridge;
 DD_DC_MOTOTR_H_t motor;
 Hysteresis_t hysteresis;
@@ -23,11 +24,9 @@ void FreeRTOS_scheduler_setup(void *pvParameters)
 
 void initializeModules(void *pvParameters)
 {
-    printf("Setup started\n\r");
-    
     own_stdio_setup();
 
-    dd_variable_resistor_setup();
+    dd_variable_resistor_setup(&variableResistor);
 
     hbridgeInit(
                     &hbridge, 
@@ -55,18 +54,26 @@ void controlMotorTask(void *pvParameters)
 
     for(;;)
     {
-        variableResistorValue = dd_variable_resistor_cycle_call();
+        variableResistorValue = dd_variable_resistor_cycle_call(&variableResistor);
         dcMotorSetSpeed(&motor, SERVO_MOTOR_SPEED);
-        while(variableResistorValue != usersCurrentSetValue)
+        printf("Resistor Value: %d. Users set value: %d\n\r", variableResistorValue, usersCurrentSetValue);
+        if(dd_variable_resistor_get_value() != usersCurrentSetValue)
         {
-            variableResistorValue = dd_variable_resistor_cycle_call(); 
-            //printf("Resistor Value: %d. Users set value: %d\n\r", variableResistorValue, usersCurrentSetValue);
-            dcMotorSetDirection(&motor, dcMotorCalculateDirection(&motor, usersCurrentSetValue, variableResistorValue, HYSTERESIS_VALUE));
-            if(dcMotorGetDirection(&motor) == DC_MOTOR_STOP)
+            dd_variable_resister_set_wasModified(&variableResistor, true);
+        }
+        if(dd_variable_resister_get_wasModified(&variableResistor) == true)
+        {
+            while(variableResistorValue != usersCurrentSetValue)
             {
-                usersCurrentSetValue = variableResistorValue;
+                variableResistorValue = dd_variable_resistor_cycle_call(&variableResistor); 
+                dcMotorSetDirection(&motor, dcMotorCalculateDirection(&motor, usersCurrentSetValue, variableResistorValue, HYSTERESIS_VALUE));
+                if(dcMotorGetDirection(&motor) == DC_MOTOR_STOP)
+                {
+                    usersCurrentSetValue = variableResistorValue;
+                }
+                dcMotorCycleCall(&motor, &hbridge);
             }
-            dcMotorCycleCall(&motor, &hbridge);
+            dd_variable_resister_set_wasModified(&variableResistor, false);
         }
         hysteresis_cycle_call(&hysteresis, variableResistorValue);
         dcMotorSetDirection(&motor, hysteresis_get_direction(&hysteresis));
@@ -75,7 +82,13 @@ void controlMotorTask(void *pvParameters)
     }
 }
 
-void vApplicationIdleHook(void)
+void printValuesTask(void *pvParameters) 
+{
+    printf("Resistor Value: %d. Users set value: %d\n\r", variableResistorValue, usersCurrentSetValue);
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+}
+
+void vApplicationIdleHook()
 {
     static uint8_t needInit = true;
     if(needInit)
@@ -83,5 +96,6 @@ void vApplicationIdleHook(void)
         initUserInterface();
         needInit = false;
     }
-    processUserCommand();
+    uint8_t result = processUserCommand();
+    dd_variable_resister_set_wasModified(&variableResistor, result);
 }

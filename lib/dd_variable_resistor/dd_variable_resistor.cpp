@@ -14,8 +14,11 @@ static uint16_t meanBuffer[WINDOW_SIZE];
 
 static uint16_t resistanceValue;
 
-void dd_variable_resistor_setup(void)
+void dd_variable_resistor_setup(DD_VARIABLE_RESISTOR_H_t *variableResistor)
 {
+    variableResistor->wasModified = true;
+    variableResistor->value = 0;
+    
     medianFilter.numNodes = WINDOW_SIZE;
     medianFilter.medianBuffer = medianBuffer;
     
@@ -26,12 +29,22 @@ void dd_variable_resistor_setup(void)
     pinMode(RESISTOR_PIN, INPUT);
 }
 
-uint16_t dd_variable_resistor_cycle_call(void)
+uint16_t dd_variable_resistor_cycle_call(DD_VARIABLE_RESISTOR_H_t *variableResistor)
 {
-    rawReadValue = dd_variable_resistor_get_value();
+    variableResistor->value = dd_variable_resistor_get_value();
     sensorValueMedian = MEDIANFILTER_Insert(&medianFilter, rawReadValue);
     sensorValueMean = MeanFilter_Insert(&meanFilter, sensorValueMedian);
-    return rawReadValue;
+    return variableResistor->value;
+}
+
+void dd_variable_resister_set_wasModified(DD_VARIABLE_RESISTOR_H_t *variableResistor, uint8_t wasModfied)
+{
+    variableResistor->wasModified = wasModfied;
+}
+
+uint8_t dd_variable_resister_get_wasModified(DD_VARIABLE_RESISTOR_H_t *variableResistor)
+{
+    return variableResistor->wasModified;
 }
 
 uint16_t dd_variable_resistor_get_value(void)

@@ -58,7 +58,7 @@ static void printHelp(void)
     printf("Type commands in format: <command> [value]\n\n");
 }
 
-void processUserCommand(void)
+uint8_t processUserCommand(void)
 {
     char inputBuffer[64];
     printf("\nCommand> ");
@@ -68,7 +68,7 @@ void processUserCommand(void)
         char *cmd = strtok(inputBuffer, " \n");
         char *valStr = strtok(NULL, " \n");
         
-        if(!cmd) return;
+        if(!cmd) return false;
 
         for(int i = 0; i < CONTROL_NUMBER_OF_COMMANDS; i++)
         {
@@ -80,15 +80,14 @@ void processUserCommand(void)
                     {
                         printf("Missing value. Usage: %s\n", 
                                servoMotorControlDescriptions[i]);
-                        return;
+                        return false;
                     }
                     
                     commandValue = atoi(valStr);
                     
-                    // Add range validation
                     if(commandValue < 0 || commandValue > 180) {
-                        printf("Error: Value %d is out of range (0-180 degrees)\n", commandValue);
-                        return;
+                        printf("Error: Value %d is out of range (0-180)\n", commandValue);
+                        return false;
                     }
                 }
                 else
@@ -97,21 +96,26 @@ void processUserCommand(void)
                     {
                         printf("Invalid usage. %s\n", 
                                servoMotorControlDescriptions[i]);
-                        return;
+                        return false;
                     }
                 }
                 
                 commandHandler[i]();
                 printf("Executed: %s\n", servoMotorControlDescriptions[i]);
-                return;
+                return true;
             }
         }
+        
         printf("Unknown command. Valid commands: ");
         for(int i = 0; i < CONTROL_NUMBER_OF_COMMANDS; i++) {
             printf("%s ", servoMotorControlCommands[i]);
         }
         printf("\n");
+        return false;
     }
+    
+    // Return false if no input received
+    return false;
 }
 
 // Command implementations

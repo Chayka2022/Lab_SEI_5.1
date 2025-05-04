@@ -9,7 +9,7 @@
 #include "own_stdio.h"
 #include "dd_variable_resistor.h"
 
-void processUserCommand(void);
+uint8_t processUserCommand(void);
 void initUserInterface(void);
 
 #endif // !USER_INTERFACE_H

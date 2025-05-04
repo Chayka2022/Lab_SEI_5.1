@@ -18,5 +18,6 @@
 
 void FreeRTOS_scheduler_setup(void *pvParameters);
 void controlMotorTask(void *pvParameters);
+void printValuesTask(void *pvParameters);
 
 #endif // !FREERTOS_TASK_SCHEDULER_H

@@ -9,7 +9,7 @@ void hbridgeInit(
                     uint16_t pwmValue
                 )
 {
-    printf("HBridge Init\n\r");
+    //printf("HBridge Init\n\r");
     hbridge->pwm_pin = pwm_pin;
     hbridge->in_1 = in_1;
     hbridge->in_2 = in_2;
