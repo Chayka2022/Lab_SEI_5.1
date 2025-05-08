@@ -56,8 +56,12 @@ void controlMotorTask(void *pvParameters)
     {
         variableResistorValue = dd_variable_resistor_cycle_call(&variableResistor);
         dcMotorSetSpeed(&motor, SERVO_MOTOR_SPEED);
-        printf("Resistor Value: %d. Users set value: %d\n\r", variableResistorValue, usersCurrentSetValue);
+        //printf("Resistor Value: %d. Users set value: %d\n\r", variableResistorValue, usersCurrentSetValue);
         if(dd_variable_resistor_get_value() != usersCurrentSetValue)
+        {
+            dd_variable_resister_set_wasModified(&variableResistor, true);
+        }
+        else 
         {
             dd_variable_resister_set_wasModified(&variableResistor, true);
         }
@@ -73,7 +77,6 @@ void controlMotorTask(void *pvParameters)
                 }
                 dcMotorCycleCall(&motor, &hbridge);
             }
-            dd_variable_resister_set_wasModified(&variableResistor, false);
         }
         hysteresis_cycle_call(&hysteresis, variableResistorValue);
         dcMotorSetDirection(&motor, hysteresis_get_direction(&hysteresis));

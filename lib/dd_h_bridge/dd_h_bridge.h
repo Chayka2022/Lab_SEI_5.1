@@ -1,7 +1,7 @@
 #ifndef DD_H_BRIDGE_H
 #define DD_H_BRIDGE_H
 
-#include <Arduino.h>
+#include <stdint.h>
 #include "config.h"
 #include "own_stdio.h"
 #include "dd_h_bridge_wrapper.h"

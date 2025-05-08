@@ -1,7 +1,7 @@
 #ifndef DD_H_BRIDGE_WRAPPER_H
 #define DD_H_BRIDGE_WRAPPER_H
 
-#include "dd_h_bridge.h"
+#include <Arduino.h>
 
 void hbridgeSetPwmWrapper(uint8_t pin, uint8_t value);
 void hbridgeSetDirectionWrapper(uint8_t in_1_pin, uint8_t in_2_pin, uint8_t in_1_value, uint8_t in_2_value);
